@@ -1,6 +1,7 @@
 ﻿output/
 logs/
 .idea/
+.run/
 
 #OS junk files
 [Tt]humbs.db
