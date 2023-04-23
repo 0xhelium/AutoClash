@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoClash.ConsoleApp", "src\AutoClash.ConsoleApp\AutoClash.ConsoleApp.csproj", "{7FD49C70-23DE-4C32-B9B7-69C5BFB6D12F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoClash.Shared", "src\AutoClash.Shared\AutoClash.Shared.csproj", "{31589D0F-ABCE-4043-846E-85705C3DF1DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoClash.Common", "src\AutoClash.Common\AutoClash.Common.csproj", "{1A3A755F-B27D-4DB8-A6A4-5E6486F27410}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7FD49C70-23DE-4C32-B9B7-69C5BFB6D12F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FD49C70-23DE-4C32-B9B7-69C5BFB6D12F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FD49C70-23DE-4C32-B9B7-69C5BFB6D12F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FD49C70-23DE-4C32-B9B7-69C5BFB6D12F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31589D0F-ABCE-4043-846E-85705C3DF1DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31589D0F-ABCE-4043-846E-85705C3DF1DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31589D0F-ABCE-4043-846E-85705C3DF1DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31589D0F-ABCE-4043-846E-85705C3DF1DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A3A755F-B27D-4DB8-A6A4-5E6486F27410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A3A755F-B27D-4DB8-A6A4-5E6486F27410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A3A755F-B27D-4DB8-A6A4-5E6486F27410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A3A755F-B27D-4DB8-A6A4-5E6486F27410}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
