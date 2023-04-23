@@ -14,7 +14,6 @@ namespace AutoClash.Console
 {
     public class Program
     {
-        private static string JsonConfigUrl;
         private static string[] Args;
         private static CancellationTokenSource Cts=new();
         
