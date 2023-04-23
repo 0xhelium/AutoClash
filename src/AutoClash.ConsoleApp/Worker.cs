@@ -19,16 +19,18 @@ public class Worker : BackgroundService
     private readonly IProxyFetcher _proxyFetcher;
     private readonly IGithubService _githubService;
     private readonly Config _config;
+    private CancellationTokenSource _cts;
 
     private List<Proxy> _proxies=new();
     private List<ProxyGroup> _proxyGroups=new();
     private List<Rule> _rules = new();
     private List<RuleSet> _ruleSets = new();
 
-    public Worker(IProxyFetcher proxyFetcher, IGithubService githubService, Config config)
+    public Worker(IProxyFetcher proxyFetcher, IGithubService githubService, Config config, CancellationTokenSource cts)
     {
         _proxyFetcher = proxyFetcher;
         _config = config;
+        _cts = cts;
         _githubService = githubService;
         _logger = Log.ForContext<Worker>();
 
@@ -52,6 +54,8 @@ public class Worker : BackgroundService
         await UploadFinalConfig(dict);
         
         _logger.Information("======== finished! ========");
+        _logger.Debug("cancelling application");
+        _cts.Cancel();
     }
 
     private async Task Init()

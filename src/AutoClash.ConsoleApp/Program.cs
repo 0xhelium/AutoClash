@@ -16,6 +16,7 @@ namespace AutoClash.Console
     {
         private static string JsonConfigUrl;
         private static string[] Args;
+        private static CancellationTokenSource Cts=new();
         
         public static async Task Main(string[] args)
         {
@@ -35,12 +36,15 @@ namespace AutoClash.Console
 
             try
             {
+                var token = Cts.Token;
                 var builder = Host.CreateDefaultBuilder(args)
                     .UseSerilog()
                     .ConfigureServices(ServiceConfigure);
 
                 var host = builder.Build();
-                await host.RunAsync();
+                await host.RunAsync(token);
+                
+                Log.ForContext<Program>().Information("Application stopping");
             }
             catch (Exception e)
             {
@@ -58,7 +62,7 @@ namespace AutoClash.Console
 
             AsyncRetryPolicy<HttpResponseMessage> GetRetryPolicy() => HttpPolicyExtensions
                 .HandleTransientHttpError()
-                .WaitAndRetryAsync(10, retryAttempt => TimeSpan.FromSeconds(3));
+                .WaitAndRetryAsync(10, _ => TimeSpan.FromSeconds(3));
             
             services
                 .AddHttpClient("default")
@@ -84,6 +88,7 @@ namespace AutoClash.Console
             
             
             services
+                .AddSingleton(Cts)
                 .AddHostedService<Worker>()
                 .AddScoped<IProxyFetcher,ProxyFetcher>()
                 .AddScoped<IGithubService,GithubService>()
