@@ -31,7 +31,6 @@ jobs:
           echo "Setting JSON_CONFIG_URL to $JSON_CONFIG_URL"
           export JSON_CONFIG_URL=$JSON_CONFIG_URL
       
-      
       - name: Run
         run: |
           cd ./src/AutoClash.ConsoleApp
