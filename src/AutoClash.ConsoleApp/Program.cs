@@ -14,12 +14,12 @@ namespace AutoClash.Console;
 
 public class Program
 {
-    private static string[] Args;
-    private static CancellationTokenSource Cts = new();
+    private static string[]? _args;
+    private static readonly CancellationTokenSource _cts = new();
         
     public static async Task Main(string[] args)
     {
-        Args = args;
+        _args = args;
 
         var loggerConf = new LoggerConfiguration()
 #if DEBUG
@@ -39,7 +39,7 @@ public class Program
 
         try
         {
-            var token = Cts.Token;
+            var token = _cts.Token;
             var builder = Host.CreateDefaultBuilder(args)
                 .UseSerilog()
                 .ConfigureServices(ServiceConfigure);
@@ -91,13 +91,13 @@ public class Program
             
             
         services
-            .AddSingleton(Cts)
+            .AddSingleton(_cts)
             .AddHostedService<Worker>()
             .AddScoped<IProxyFetcher,ProxyFetcher>()
             .AddScoped<IGithubService,GithubService>()
             .AddSingleton<Config>( serviceProvider =>
             {
-                var jsonConfUrl = GetUrlFromCmd(Args);
+                var jsonConfUrl = GetUrlFromCmd(_args);
                     
                 if (string.IsNullOrEmpty(jsonConfUrl))
                 {
@@ -117,10 +117,10 @@ public class Program
 
     }
 
-    private static string GetUrlFromCmd(string[] args)
+    private static string GetUrlFromCmd(IEnumerable<string>? args)
     {
-        var argList = args.ToList();
-        var cmdName = "--config-url";
+        var argList = args?.ToList()??new List<string>();
+        const string cmdName = "--config-url";
         if (argList.All(x => x != cmdName)) return "";
 
         var index = argList.IndexOf(cmdName);
