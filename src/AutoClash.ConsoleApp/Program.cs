@@ -93,10 +93,8 @@ namespace AutoClash.Console
                 .AddScoped<IGithubService,GithubService>()
                 .AddSingleton<Config>( serviceProvider =>
                 {
-                    var jsonConfUrl = Environment.GetEnvironmentVariable("JSON_CONFIG_URL");
-                    #if DEBUG
-                    jsonConfUrl = GetUrlFromCmd(Args);
-                    #endif
+                    var jsonConfUrl = GetUrlFromCmd(Args);
+                    
                     if (string.IsNullOrEmpty(jsonConfUrl))
                     {
                         throw new Exception("env `JSON_CONFIG_URL` not set");
@@ -119,14 +117,12 @@ namespace AutoClash.Console
 
         private static string GetUrlFromCmd(string[] args)
         {
-#if DEBUG
             var argList = args.ToList();
             var cmdName = "--config-url";
             if (argList.All(x => x != cmdName)) return "";
 
             var index = argList.IndexOf(cmdName);
             return argList.Count > index + 1 ? argList[index + 1] : "";
-#endif
         }
     }
 }

@@ -24,14 +24,7 @@ jobs:
         with:
           dotnet-version: 7.0.x
           
-      - name: Setup env
-        env:
-          JSON_CONFIG_URL: ${{secrets.JSON_CONFIG_URL}}
-        run: |
-          echo "Setting JSON_CONFIG_URL to $JSON_CONFIG_URL"
-          export JSON_CONFIG_URL=$JSON_CONFIG_URL
-      
       - name: Run
         run: |
           cd ./src/AutoClash.ConsoleApp
-          dotnet run --environment "JSON_CONFIG_URL=$JSON_CONFIG_URL"
+          dotnet run --config-url ${{secrets.JSON_CONFIG_URL}}
