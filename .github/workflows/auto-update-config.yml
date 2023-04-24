@@ -34,4 +34,4 @@ jobs:
       - name: Run
         run: |
           cd ./src/AutoClash.ConsoleApp
-          dotnet run
+          dotnet run --environment "JSON_CONFIG_URL=$JSON_CONFIG_URL"
