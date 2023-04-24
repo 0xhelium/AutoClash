@@ -27,4 +27,4 @@ jobs:
       - name: Run
         run: |
           cd ./src/AutoClash.ConsoleApp
-          dotnet run --config-url ${{secrets.JSON_CONFIG_URL}}
+          dotnet run --config-url ${{secrets.JSON_CONFIG_URL}} -c Release
