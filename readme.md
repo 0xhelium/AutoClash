@@ -16,34 +16,22 @@
       {
         //私有节点信息
         "Name": "private",
-        "Url": "https://xx.vps.yaml"
+        "Url": "https://xx.vps.yaml",
+        //按国家/地区生成分组, 分组类型为自动选择, 分组命名规则: {flag-emoji} {name}_{country}
+        "GenCountryGroups": false
       },
       {
         "Name": "web3",
-        "Url": "https://xxx?target=clash"
+        "Url": "https://xxx?target=clash",
+        "GenCountryGroups": true
       },
       {
         "Name": "oness",
         "Url": "https://xxx?clash=3",
-        "ExcludeFilter": "公告"
+        //排除的节点, 正则
+        "ExcludeFilter": "公告",
+        "GenCountryGroups": true
       }
-    ],
-    //分组信息生成配置
-    "GroupGenerateRules": [
-        {
-            "Name": "private",
-            "GenCountryGroups": false
-        },
-        {
-            "Name": "web3",
-            "GenCountryGroups": true
-        },
-        {
-            //匹配: VpnProviderConfigs[].name
-            "Name": "oness",
-            //按国家/地区生成分组, 分组类型为自动选择, 分组命名规则: {flag-emoji} {name}_{country}
-            "GenCountryGroups": false
-        }
     ],
     //自定义分组配置, 这里生成的分组会加上 `custom` 的 tag, 这里生成的分组信息会在地区分组之前.
     "CustomGroups": [

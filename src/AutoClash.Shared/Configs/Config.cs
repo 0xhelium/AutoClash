@@ -10,11 +10,6 @@ public class Config
     public VpnProviderConfig[] VpnProviders { get; set; } = Array.Empty<VpnProviderConfig>();
     
     /// <summary>
-    /// 分组生成规则
-    /// </summary>
-    public GroupGenerateRuleConfig[] GroupGenerateRules { get; set; } = Array.Empty<GroupGenerateRuleConfig>();
-    
-    /// <summary>
     /// 自定义分组规则
     /// </summary>
     public CustomGroupConfig[] CustomGroups { get; set; } = Array.Empty<CustomGroupConfig>();

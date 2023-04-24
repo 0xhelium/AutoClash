@@ -141,16 +141,16 @@ public class Worker : BackgroundService
     /// <returns></returns>
     private  Task GenProxyGroupsByCountry()
     {
-        var rules = _config.GroupGenerateRules;
-        if (rules.Length == 0)
+        var providers = _config.VpnProviders;
+        if (providers.Length == 0)
         {
             return Task.CompletedTask;
         }
 
-        foreach (var rule in rules)
+        foreach (var provider in providers)
         {
-            var proxies = _proxies.Where(x => x.HasTag(rule.Name)).ToList();
-            if (rule.GenCountryGroups)
+            var proxies = _proxies.Where(x => x.HasTag(provider.Name)).ToList();
+            if (provider.GenCountryGroups)
             {
                 var countryGroups = new Dictionary<string, List<string>>(); 
                 foreach (var proxy in proxies)
@@ -159,7 +159,7 @@ public class Worker : BackgroundService
                     var countryName = _countryNames.FirstOrDefault(x => proxyName.Contains(x));
                     if (string.IsNullOrEmpty(countryName)) continue;
 
-                    var groupName = $"{_countryDict[countryName]} {rule.Name}_{countryName}";
+                    var groupName = $"{_countryDict[countryName]} {provider.Name}_{countryName}";
                     if (countryGroups.TryGetValue(groupName, out var groupItems))
                     {
                         groupItems.Add(proxyName);
@@ -178,7 +178,7 @@ public class Worker : BackgroundService
                         var proxyGroup = new ProxyGroup(ClashHelper.GetProxyGroupByType("url-test"));
                         proxyGroup.Name = x.Key;
                         proxyGroup.Proxies.AddRange(x.Value);
-                        proxyGroup.AddTag(rule.Name);
+                        proxyGroup.AddTag(provider.Name);
                         proxyGroup.AddTag("area_group");
                         return proxyGroup;
                     }).ToList();

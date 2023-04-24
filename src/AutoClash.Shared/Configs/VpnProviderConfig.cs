@@ -23,4 +23,8 @@ public class VpnProviderConfig
     /// </summary>
     public string? ExcludeFilter { get; set; }
     
+    /// <summary>
+    /// 将订阅的节点按国家/地区, 生成分组(type:select)
+    /// </summary>
+    public bool GenCountryGroups { get; set; }
 }

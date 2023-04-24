@@ -101,7 +101,7 @@ public class Program
                     
                 if (string.IsNullOrEmpty(jsonConfUrl))
                 {
-                    throw new Exception("env `JSON_CONFIG_URL` not set");
+                    throw new Exception("argument `--config-url` not set");
                 }
 
                 var uri = new Uri(jsonConfUrl);
