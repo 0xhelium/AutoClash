@@ -1,8 +1,33 @@
 #### clash 配置文件合并
 
-配置:
+合并多个订阅节点, 并按配置生成新的clash配置文件.
+
+使用方式:
+- 创建 gist 文件, 作为最终配置, 例如 `clash.yaml`.
+- 创建 gist 文件, 作为程序配置, 例如 `config.json`.
+- 设置 `Repository secrets`, key 为: `JSON_CONFIG_URL`, 值为上一步的 gist 文件地址. 格式为: `https://gist.githubusercontent.com/{userid}/{gistid}/raw/{filename}`
+
+
+配置项说明:
 ```json5
 {
+    //订阅配置, 订阅信息只支持clash配置
+    "VpnProviders": [
+      {
+        //私有节点信息
+        "Name": "private",
+        "Url": "https://xx.vps.yaml"
+      },
+      {
+        "Name": "web3",
+        "Url": "https://xxx?target=clash"
+      },
+      {
+        "Name": "oness",
+        "Url": "https://xxx?clash=3",
+        "ExcludeFilter": "公告"
+      }
+    ],
     //分组信息生成配置
     "GroupGenerateRules": [
         {
@@ -20,13 +45,14 @@
             "GenCountryGroups": false
         }
     ],
-    //自定义分组配置, 这里生成的分组会加上 `custom` 的 tag,  如果要将分组放到最后, OrderIndex 需要大于等于 100
+    //自定义分组配置, 这里生成的分组会加上 `custom` 的 tag, 这里生成的分组信息会在地区分组之前.
     "CustomGroups": [
         {
             "Name": "🚫 未匹配流量",
             "Type": "select",
             "Filters": [
-                "DIRECT", 
+                "DIRECT",
+                //节点过滤, 多个filter按照顺序生成到 `proxies` 中, 格式: <proxy/group>::<tag(支持多个tag, 逗号分隔)>::<正则>
                 "group::custom::选择代理"
             ]
         },
@@ -128,7 +154,6 @@
         {
             "Name": "🛫 负载均衡",
             "Type": "load-balance",
-            //节点过滤, 多个filter按照顺序生成到 `proxies` 中, 格式: <proxies or groups>::<tag>::<正则>
             "Filters": [
                 "proxy::oness::香港",
                 "proxy::oness::日本"
@@ -190,22 +215,6 @@
         "RULE-SET,google,选择代理",
         "GEOIP,CN,DIRECT",
         "MATCH,未匹配流量",
-    ],
-    "VpnProviders": [
-        {
-            //私有节点信息
-            "Name": "private",
-            "Url": "https://xx.vps.yaml"
-        },
-        {
-            "Name": "web3",
-            "Url": "https://xxx?target=clash"
-        },
-        {
-            "Name": "oness",
-            "Url": "https://xxx?clash=3",
-            "ExcludeFilter": "公告"
-        }
     ],
     //文件合并完成之后, 更新gist文件
     "GithubGist": {
