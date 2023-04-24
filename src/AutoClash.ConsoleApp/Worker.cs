@@ -50,29 +50,28 @@ public class Worker : BackgroundService
         await Init();
         var dict = await GenerateFinalYaml();
         
-        _logger.Information("uploading config to gist");
+        _logger.Information(" > uploading config to gist");
         await UploadFinalConfig(dict);
         
-        _logger.Information("======== finished! ========");
-        _logger.Debug("cancelling application");
+        _logger.Information(" > cancelling application");
         _cts.Cancel();
     }
 
     private async Task Init()
     {
-        _logger.Information("fetching proxies...");
+        _logger.Information(" > fetching proxies");
         await GetAllProxies();
         
-        _logger.Information("generating proxy groups by country...");
+        _logger.Information(" > generating proxy groups by country");
         await GenProxyGroupsByCountry();
 
-        _logger.Information("generating proxy groups by config...");
+        _logger.Information(" > generating proxy groups by config");
         await GenCustomProxyGroups();
         
-        _logger.Information("generating rules...");
+        _logger.Information(" > generating rules");
         await GenRules();
         
-        _logger.Information("generating rule providers...");
+        _logger.Information(" > generating rule providers");
         await GenRuleProviders();
     }
 

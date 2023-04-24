@@ -30,6 +30,7 @@ public class Program
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+            .MinimumLevel.Override("System.Net.Http", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .WriteTo.Console();
 
@@ -55,25 +56,33 @@ public class Program
         }
         finally
         {
+            Log.Information("======== FINISHED ========");
             await Log.CloseAndFlushAsync();
         }
     }
 
     private static void ServiceConfigure(HostBuilderContext ctx, IServiceCollection services)
     {
-        Log.ForContext<Program>().Debug("{State}", "ServiceConfigure...");
+        Log.ForContext<Program>().Debug("{State}", "ServiceConfigure");
 
         AsyncRetryPolicy<HttpResponseMessage> GetRetryPolicy() => HttpPolicyExtensions
-            .HandleTransientHttpError()
-            .WaitAndRetryAsync(10, _ => TimeSpan.FromSeconds(3));
+            .HandleTransientHttpError()            
+            .WaitAndRetryAsync(
+                10,
+                _ => TimeSpan.FromSeconds(3),
+                (result, ts) =>
+                {
+                    var response = result.Result;
+                    var status = response.StatusCode;
+                    var reqHost = response?.RequestMessage?.RequestUri?.Host;
+                    var resp = response?.Content.ReadAsStringAsync().Result;
+
+                    Log.Error("[retry in {S} seconds] request {Host} failed - {Status}, response: {Resp}", ts.Seconds, reqHost, status, resp);
+                });
             
         services
             .AddHttpClient("default")
-            .AddPolicyHandler(req =>
-            {
-                Log.Error("request {Url} failed",req.RequestUri?.ToString());
-                return GetRetryPolicy();
-            });
+            .AddPolicyHandler(req => GetRetryPolicy());
 
         services.AddHttpClient("github", (serviceProvider, client) =>
             {
@@ -83,11 +92,7 @@ public class Program
                     new AuthenticationHeaderValue("Bearer", config.GithubGist.Token);
                 client.DefaultRequestHeaders.Add("User-Agent", "auto-clash");
             })
-            .AddPolicyHandler(req =>
-            {
-                Log.Error("request {Url} failed", req.RequestUri?.ToString());
-                return GetRetryPolicy();
-            });
+            .AddPolicyHandler(req => GetRetryPolicy());
             
             
         services
@@ -107,10 +112,12 @@ public class Program
                 var uri = new Uri(jsonConfUrl);
                 var timespanQueryPrefix = string.IsNullOrEmpty(uri.Query) ? "?" : "&";
                 jsonConfUrl += $"{timespanQueryPrefix}_={DateTimeOffset.Now.Ticks}";
-
                 var httpClient = serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("default");
+                
+                Log.Information(" > fetching config file");
+                
                 var response = httpClient.GetStringAsync(jsonConfUrl).Result;
-                Log.Debug("Config content:\n{Config}", response);
+                
                 var config = JsonConvert.DeserializeObject<Config>(response) ?? new Config();
                 return config;
             });
