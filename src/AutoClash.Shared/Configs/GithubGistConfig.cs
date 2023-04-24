@@ -2,9 +2,9 @@
 
 public class GithubGistConfig
 {
-    public string Token { get; set; }
-    
-    public string GistId { get; set; }
-    
-    public string FileName { get; set; }
+    public string Token { get; set; } = string.Empty;
+
+    public string GistId { get; set; } = string.Empty;
+
+    public string FileName { get; set; } = string.Empty;
 }

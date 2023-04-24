@@ -3,9 +3,9 @@
 public class RuleSet
 {
     public string Type { get; set; } = "http";
-    public string Name { get; set; }
-    public string Url { get; set; }
-    public string Behavior { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Url { get; set; } = string.Empty;
+    public string Behavior { get; set; } = string.Empty;
 
     public string Path => $"./ruleset/{Name}.yaml";
 
