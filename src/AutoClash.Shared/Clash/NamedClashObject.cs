@@ -8,8 +8,7 @@ public abstract class NamedClashObject: Dictionary<string,object>
     {
         foreach (var (key, value) in source)
         {
-            this.Remove(key);
-            this.Add(key,value);
+            TryAdd(key,value);
         }
     }
 
@@ -41,18 +40,10 @@ public abstract class NamedClashObject: Dictionary<string,object>
 
     public bool HasTag(string tag)
     {
-        if (tag.Contains(','))
-        {
-            var result = true;
-            var arr = tag.Split(',');
-            foreach (var t in arr)
-            {
-               result = result && TagHelper.HasTag(this,t);
-            }
-
-            return result;
-        }
-        return TagHelper.HasTag(this,tag);
+        if (!tag.Contains(',')) return TagHelper.HasTag(this, tag);
+        
+        var arr = tag.Split(',');
+        return arr.All(t => TagHelper.HasTag(this, t));
     }
 }
 
