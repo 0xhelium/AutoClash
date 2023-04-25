@@ -6,6 +6,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoClash.Shared", "src\Aut
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoClash.Common", "src\AutoClash.Common\AutoClash.Common.csproj", "{1A3A755F-B27D-4DB8-A6A4-5E6486F27410}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{20870B28-9FE8-4E6D-966A-25DE21BC923A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{51C226DC-B91D-4ACE-AE1D-EB6937D62ABB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{E7567DF3-C66B-4955-B488-AAF99B02FFD3}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\auto-update-config.yml = .github\workflows\auto-update-config.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +33,11 @@ Global
 		{1A3A755F-B27D-4DB8-A6A4-5E6486F27410}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A3A755F-B27D-4DB8-A6A4-5E6486F27410}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A3A755F-B27D-4DB8-A6A4-5E6486F27410}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1A3A755F-B27D-4DB8-A6A4-5E6486F27410} = {20870B28-9FE8-4E6D-966A-25DE21BC923A}
+		{7FD49C70-23DE-4C32-B9B7-69C5BFB6D12F} = {20870B28-9FE8-4E6D-966A-25DE21BC923A}
+		{31589D0F-ABCE-4043-846E-85705C3DF1DF} = {20870B28-9FE8-4E6D-966A-25DE21BC923A}
+		{E7567DF3-C66B-4955-B488-AAF99B02FFD3} = {51C226DC-B91D-4ACE-AE1D-EB6937D62ABB}
 	EndGlobalSection
 EndGlobal
