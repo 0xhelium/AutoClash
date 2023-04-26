@@ -24,13 +24,14 @@ public class Program
         var loggerConf = new LoggerConfiguration()
 #if DEBUG
             .MinimumLevel.Debug()
+            .MinimumLevel.Override("System.Net.Http", LogEventLevel.Information)
 #else
             .MinimumLevel.Information()
+            .MinimumLevel.Override("System.Net.Http", LogEventLevel.Warning)
 #endif
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-            .MinimumLevel.Override("System.Net.Http", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .WriteTo.Console();
 
@@ -56,7 +57,7 @@ public class Program
         }
         finally
         {
-            Log.Information("======== FINISHED ========");
+            Log.Information("======== Application Stopped ========");
             await Log.CloseAndFlushAsync();
         }
     }

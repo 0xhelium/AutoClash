@@ -214,13 +214,22 @@ public class Worker : BackgroundService
         //var numberOfProcessed = 0;
         var processingIndex = -1;
         var processed = new List<int>();
+        var lastNumberOfProcessed = 0;
 
         while (processed.Count < customGroups.Length)
         {
             processingIndex++;
             if (processingIndex == customGroups.Length)
             {
+                if (lastNumberOfProcessed == processed.Count)
+                {
+                    Log.Error("generate proxy groups failed, please check config of `CustomGroups` section.");
+                    throw new Exception("invalid config");
+                }
+
                 processingIndex = 0;
+                lastNumberOfProcessed = processed.Count;
+                _logger.Debug(" -> reset loop index");
             }
             
             var customGroup = customGroups[processingIndex];
@@ -286,18 +295,17 @@ public class Worker : BackgroundService
         _rules = _config.Rules.Select(x =>
         {
             var rule = new Rule(x);
-            if (rule.Proxy!="DIRECT")
+            if (rule.Proxy == "DIRECT") return rule;
+            
+            var group = _proxyGroups.FirstOrDefault(g => g.Name.Contains(rule.Proxy));
+            if (group == null)
             {
-                var group = _proxyGroups.FirstOrDefault(g => g.Name.Contains(rule.Proxy));
-                if (group == null)
-                {
-                    var proxy= _proxies.FirstOrDefault(p => p.Name.Contains(rule.Proxy));
-                    rule.Proxy = proxy?.Name ?? throw new Exception($"invalid rule:{rule}");
-                }
-                else
-                {
-                    rule.Proxy = group.Name;
-                }
+                var proxy= _proxies.FirstOrDefault(p => p.Name.Contains(rule.Proxy));
+                rule.Proxy = proxy?.Name ?? throw new Exception($"invalid rule:{rule}");
+            }
+            else
+            {
+                rule.Proxy = group.Name;
             }
 
             return rule;
@@ -325,7 +333,20 @@ public class Worker : BackgroundService
             var emojiString = char.ConvertFromUtf32(unicodeInt);
             return emojiString;
         });
+        
+        var finalConfig= $"""
+            # generate at: {DateTimeOffset.Now:yyyy-MM-ddTHH:mm:ss zz}
+            #####################################################################################
+            #   █████╗ ██╗   ██╗████████╗ ██████╗      ██████╗██╗      █████╗ ███████╗██╗  ██╗  #
+            #  ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗    ██╔════╝██║     ██╔══██╗██╔════╝██║  ██║  #
+            #  ███████║██║   ██║   ██║   ██║   ██║    ██║     ██║     ███████║███████╗███████║  #
+            #  ██╔══██║██║   ██║   ██║   ██║   ██║    ██║     ██║     ██╔══██║╚════██║██╔══██║  #
+            #  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝    ╚██████╗███████╗██║  ██║███████║██║  ██║  #
+            #  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝      ╚═════╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝  #
+            #####################################################################################
+            {replacedString}
+            """;
 
-        await _githubService.UpdateGist(_config.GithubGist.GistId, _config.GithubGist.FileName, replacedString);
+        await _githubService.UpdateGist(_config.GithubGist.GistId, _config.GithubGist.FileName, finalConfig);
     }
 }

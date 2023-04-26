@@ -22,7 +22,7 @@ public class GithubService: IGithubService
         var body = JsonConvert.SerializeObject(
             new
             {
-                description = $"generate by auto-clash, at {DateTimeOffset.Now:s}",
+                description = $"generate by auto-clash, at {DateTimeOffset.Now:yyyy-MM-ddTHH:mm:ss zz}",
                 files = new Dictionary<string, object>
                 {
                     { fileName, new { content = yaml } }
