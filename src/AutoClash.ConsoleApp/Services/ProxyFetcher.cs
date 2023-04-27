@@ -33,11 +33,10 @@ public class ProxyFetcher : IProxyFetcher
         
         foreach (var item in ps )
         {
-            if (item is  Dictionary<object,object> dict)
-            {
-                var dic = new Proxy(dict.ToDictionary(x => x.Key.ToString()!, x => x.Value));
-                result.Add(dic);
-            }
+            if (item is not Dictionary<object, object> dict) continue;
+            
+            var dic = new Proxy(dict.ToDictionary(x => x.Key.ToString()!, x => x.Value));
+            result.Add(dic);
         }
 
         return result;

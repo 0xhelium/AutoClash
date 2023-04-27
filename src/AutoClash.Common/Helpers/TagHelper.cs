@@ -6,8 +6,8 @@ public abstract class TagHelper
 
     public static void AddTag(Dictionary<string,object> source, string value)
     {
-        var tag = source.TryGetValue(Tag, out var tagContent);
-        var newTag = (tagContent == null || string.IsNullOrEmpty(tagContent.ToString()))
+        var find = source.TryGetValue(Tag, out var tagContent);
+        var newTag = (!find || tagContent == null || string.IsNullOrEmpty(tagContent.ToString()))
             ? value
             : tagContent + "," + value;
         source.Remove(Tag);

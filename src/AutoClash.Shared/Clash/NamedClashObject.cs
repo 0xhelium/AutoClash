@@ -14,7 +14,7 @@ public abstract class NamedClashObject: Dictionary<string,object>
 
     public string Name
     {
-        get => this.TryGetValue("name", out var name) ? name.ToString()! : throw new Exception("name not found");
+        get => this.TryGetValue("name", out var name) ? name.ToString()! : throw new Exception("`name` not found");
         set
         {
             if (this.ContainsKey("name"))
@@ -44,39 +44,5 @@ public abstract class NamedClashObject: Dictionary<string,object>
         
         var arr = tag.Split(',');
         return arr.All(t => TagHelper.HasTag(this, t));
-    }
-}
-
-public class Proxy : NamedClashObject
-{
-    public Proxy(Dictionary<string, object> source) : base(source)
-    {
-    }
-}
-
-
-
-public class ProxyGroup : NamedClashObject
-{
-    public List<string> Proxies
-    {
-        get => this.TryGetValue("proxies", out var ps) 
-            ? (List<string>)ps
-            : new List<string>();
-        set
-        {
-            if (this.ContainsKey("proxies"))
-            {
-                this["proxies"] = value;
-            }
-            else
-            {
-                this.Add("proxies", value);
-            }
-        }
-    }
-
-    public ProxyGroup(Dictionary<string, object> source) : base(source)
-    {
     }
 }

@@ -2,27 +2,21 @@
 
 public class VpnProviderConfig
 {
-    public VpnProviderConfig(string name, string url)
-    {
-        Name = name;
-        Url = url;
-    }
-
     /// <summary>
     /// 服务提供商名称
     /// </summary>
-    public string Name { get; set; }
-    
+    public string Name { get; set; } = string.Empty;
+
     /// <summary>
     /// 订阅地址
     /// </summary>
-    public string Url { get; set; }
-    
+    public string Url { get; set; } = string.Empty;
+
     /// <summary>
     /// 排除节点
     /// </summary>
     public string? ExcludeFilter { get; set; }
-    
+
     /// <summary>
     /// 将订阅的节点按国家/地区, 生成分组(type:select)
     /// </summary>
