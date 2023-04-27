@@ -13,20 +13,24 @@ namespace AutoClash.Console;
 public class Worker : BackgroundService
 {
     private readonly Dictionary<string, string> _countryDict;
-    private IEnumerable<string> _countryNames;
+    private readonly IEnumerable<string> _countryNames;
 
     private readonly ILogger _logger;
     private readonly IProxyFetcher _proxyFetcher;
     private readonly IGithubService _githubService;
     private readonly Config _config;
-    private CancellationTokenSource _cts;
+    private readonly CancellationTokenSource _cts;
 
-    private List<Proxy> _proxies=new();
-    private List<ProxyGroup> _proxyGroups=new();
-    private List<Rule> _rules = new();
-    private List<RuleSet> _ruleSets = new();
+    private readonly List<Proxy> _proxies=new();
+    private readonly List<ProxyGroup> _proxyGroups=new();
+    private readonly List<Rule> _rules = new();
+    private readonly List<RuleSet> _ruleSets = new();
 
-    public Worker(IProxyFetcher proxyFetcher, IGithubService githubService, Config config, CancellationTokenSource cts)
+    public Worker(
+        IProxyFetcher proxyFetcher,
+        IGithubService githubService,
+        Config config, 
+        CancellationTokenSource cts)
     {
         _proxyFetcher = proxyFetcher;
         _config = config;
@@ -292,15 +296,15 @@ public class Worker : BackgroundService
 
     private Task GenRules()
     {
-        _rules = _config.Rules.Select(x =>
+        _rules.AddRange(_config.Rules.Select(x =>
         {
             var rule = new Rule(x);
             if (rule.Proxy == "DIRECT") return rule;
-            
+
             var group = _proxyGroups.FirstOrDefault(g => g.Name.Contains(rule.Proxy));
             if (group == null)
             {
-                var proxy= _proxies.FirstOrDefault(p => p.Name.Contains(rule.Proxy));
+                var proxy = _proxies.FirstOrDefault(p => p.Name.Contains(rule.Proxy));
                 rule.Proxy = proxy?.Name ?? throw new Exception($"invalid rule:{rule}");
             }
             else
@@ -309,7 +313,8 @@ public class Worker : BackgroundService
             }
 
             return rule;
-        }).ToList();
+        }));
+
         return Task.CompletedTask;
     }
 
@@ -317,22 +322,17 @@ public class Worker : BackgroundService
     {
         var rules = _rules.Select(x => x.Content);
         var inuse = _config.RuleSets.Where(x => rules.Contains(x.Name));
-        _ruleSets = inuse.ToList();
+        _ruleSets.AddRange(inuse);
         return Task.CompletedTask;
     }
 
     private async Task UploadFinalConfig(object config)
     {
-        var serializer = new SerializerBuilder()
-            .Build();
-        var yaml = serializer.Serialize(config);
-        var reg = new Regex(@"\\U[A-F0-9]{8}");
-        var replacedString = reg.Replace(yaml, match =>
-        {
-            var unicodeInt = Convert.ToInt32(match.Value[2..], 16);
-            var emojiString = char.ConvertFromUtf32(unicodeInt);
-            return emojiString;
-        });
+        var yaml = new SerializerBuilder().Build().Serialize(config);
+        yaml = Regex.Replace(
+            yaml,
+            @"\\U[A-F0-9]{8}",
+            match => char.ConvertFromUtf32(Convert.ToInt32(match.Value[2..], 16)));
         
         var finalConfig= $"""
             # generate at: {DateTimeOffset.Now:yyyy-MM-ddTHH:mm:ss zz}
@@ -344,7 +344,7 @@ public class Worker : BackgroundService
             #  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝    ╚██████╗███████╗██║  ██║███████║██║  ██║  #
             #  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝      ╚═════╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝  #
             #####################################################################################
-            {replacedString}
+            {yaml}
             """;
 
         await _githubService.UpdateGist(_config.GithubGist.GistId, _config.GithubGist.FileName, finalConfig);
