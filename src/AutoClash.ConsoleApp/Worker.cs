@@ -113,29 +113,35 @@ public class Worker : BackgroundService
             return ;
         }
 
-        await Parallel.ForEachAsync(_config.VpnProviders, async (config, _) =>
-        {
-            if (config == null) throw new ArgumentNullException(nameof(config));
-            
-            var ps = await _proxyFetcher.GetProxies(config.Url);
-            if (ps?.Count > 0)
-            {
-                foreach (var p in ps)
-                {
-                    p.AddTag(config.Name);
-                }
+        var maxDegreeOfParallelism = _config.VpnProviders.Length;
+#if DEBUG
+        maxDegreeOfParallelism = 1;
+#endif
 
-                if (!string.IsNullOrEmpty(config.ExcludeFilter))
+        await Parallel.ForEachAsync(_config.VpnProviders,
+            new ParallelOptions() { MaxDegreeOfParallelism = maxDegreeOfParallelism }, async (config, _) =>
+            {
+                if (config == null) throw new ArgumentNullException(nameof(config));
+
+                var ps = await _proxyFetcher.GetProxies(config.Url);
+                if (ps?.Count > 0)
                 {
-                    var r = new Regex(config.ExcludeFilter);
-                    _proxies.AddRange(ps.Where(p => !r.IsMatch(p.Name)));
+                    foreach (var p in ps)
+                    {
+                        p.AddTag(config.Name);
+                    }
+
+                    if (!string.IsNullOrEmpty(config.ExcludeFilter))
+                    {
+                        var r = new Regex(config.ExcludeFilter);
+                        _proxies.AddRange(ps.Where(p => !r.IsMatch(p.Name)));
+                    }
+                    else
+                    {
+                        _proxies.AddRange(ps);
+                    }
                 }
-                else
-                {
-                    _proxies.AddRange(ps);
-                }
-            }
-        });
+            });
     }
 
     /// <summary>

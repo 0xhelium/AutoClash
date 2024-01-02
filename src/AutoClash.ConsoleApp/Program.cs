@@ -82,7 +82,10 @@ public class Program
                 });
             
         services
-            .AddHttpClient("default")
+            .AddHttpClient("default", client =>
+            {
+                client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "ClashforWindows/0.20.39");
+            })
             .AddPolicyHandler(req => GetRetryPolicy());
 
         services.AddHttpClient("github", (serviceProvider, client) =>
