@@ -110,7 +110,7 @@ public class Worker : BackgroundService
     {
         if (_config.VpnProviders.Length == 0)
         {
-            return ;
+            return;
         }
 
         var maxDegreeOfParallelism = _config.VpnProviders.Length;
@@ -247,7 +247,6 @@ public class Worker : BackgroundService
             {
                 continue;
             }
-
             
             var filters = customGroup.GetFilters();
             if (filters.Length == 0) continue;
@@ -260,7 +259,7 @@ public class Worker : BackgroundService
                 {
                     filteredProxies.Add("DIRECT");
                 }
-
+                
                 var regex = new Regex(filter.Filter);
                 var filteredNames = ((IEnumerable<NamedClashObject>)(filter.Type == "proxy" ? _proxies : _proxyGroups))
                     .Where(x => x.HasTag(filter.Tag) && regex.IsMatch(x.Name))

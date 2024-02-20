@@ -17,12 +17,18 @@ public class ProxyFetcher : IProxyFetcher
     {
         var result = new List<Proxy>();
         var client = _factory.CreateClient("default");
-        var response = await client.GetStringAsync(url);
+        //var response = await client.GetStringAsync(url);
+        var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url));
+        if (!response.IsSuccessStatusCode)
+        {
+            return new List<Proxy>();
+        }
+        
         var deserializer = new DeserializerBuilder()
             .WithNamingConvention(UnderscoredNamingConvention.Instance)
             .Build();
 
-        var config = deserializer.Deserialize<Dictionary<string, object>>(response);
+        var config = deserializer.Deserialize<Dictionary<string, object>>(await response.Content.ReadAsStringAsync());
         var ps = config.TryGetValue("proxies", out var conf)
             ? conf as List<object>
             : default;
